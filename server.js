@@ -10,8 +10,20 @@ const session = require('express-session');
 const authController = require('./controllers/auth.js');
 const recipesController = require('./controllers/recipes.js');
 const ingredientsController = require('./controllers/ingredients.js');
+const isSignedIn = require('./middleware/is-signed-in.js');
+const passUserToView = require('./middleware/pass-user-to-view.js');
 
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+app.use(passUserToView);
 app.use('/auth', authController);
+app.use(isSignedIn);
 app.use('/recipes', recipesController);
 app.use('/ingredients', ingredientsController);
 
@@ -26,26 +38,12 @@ mongoose.connection.on('connected', () => {
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
 // app.use(morgan('dev'));
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-  })
-);
+
 
 app.get('/', (req, res) => {
   res.render('index.ejs', {
     user: req.session.user,
   });
-});
-
-app.get('/vip-lounge', (req, res) => {
-  if (req.session.user) {
-    res.send(`Welcome to the party ${req.session.user.username}.`);
-  } else {
-    res.send('Sorry, no guests allowed.');
-  }
 });
 
 app.use('/auth', authController);
