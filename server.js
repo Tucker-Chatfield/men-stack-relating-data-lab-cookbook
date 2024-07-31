@@ -22,23 +22,6 @@ app.use(
 );
 
 app.use(passUserToView);
-app.use('/auth', authController);
-app.use(isSignedIn);
-app.use('/recipes', recipesController);
-app.use('/ingredients', ingredientsController);
-
-const port = process.env.PORT ? process.env.PORT : '3000';
-
-mongoose.connect(process.env.MONGODB_URI);
-
-mongoose.connection.on('connected', () => {
-  console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
-});
-
-app.use(express.urlencoded({ extended: false }));
-app.use(methodOverride('_method'));
-// app.use(morgan('dev'));
-
 
 app.get('/', (req, res) => {
   res.render('index.ejs', {
@@ -47,6 +30,22 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', authController);
+
+app.use(isSignedIn);
+app.use('/recipes', recipesController);
+app.use('/ingredients', ingredientsController);
+
+app.use(express.urlencoded({ extended: false }));
+app.use(methodOverride('_method'));
+// app.use(morgan('dev'));
+
+const port = process.env.PORT ? process.env.PORT : '3000';
+
+mongoose.connect(process.env.MONGODB_URI);
+mongoose.connection.on('connected', () => {
+  console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
+});
+
 
 app.listen(port, () => {
   console.log(`The express app is ready on port ${port}!`);
