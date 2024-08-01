@@ -4,7 +4,6 @@ dotenv.config();
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-const methodOverride = require('method-override');
 const morgan = require('morgan');
 const session = require('express-session');
 
@@ -33,13 +32,14 @@ app.get('/', (req, res) => {
   });
 });
 
-app.use('/auth', authController);
+const methodOverride = require('method-override');
+app.use(methodOverride('_method'));
 
+app.use('/auth', authController);
 app.use(isSignedIn);
 app.use('/recipes', recipesController);
 app.use('/ingredients', ingredientsController);
 
-app.use(methodOverride('_method'));
 // app.use(morgan('dev'));
 
 const port = process.env.PORT ? process.env.PORT : '3000';

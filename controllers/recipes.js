@@ -75,7 +75,7 @@ router.put('/:id', async (req, res) => {
 // Delete route
 router.delete('/:id', async (req, res) => {
   try {
-    await Recipe.findByIdAndRemove(req.params.id);
+    await Recipe.findByIdAndDelete(req.params.id);
     res.redirect('/recipes');
   } catch (error) {
     res.status(500).send(error.message);
